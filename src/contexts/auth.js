@@ -74,7 +74,7 @@ function AuthProvider({ children }) {
           let data = {
             uid: uid,
             noma: name,
-            email: value.user.email,
+
             avatarUrl: null,
           };
           setUser(data);
@@ -86,6 +86,7 @@ function AuthProvider({ children }) {
         });
       })
       .catch((error) => {
+        console.log(error);
         setLoadingAuth(false);
       });
   }

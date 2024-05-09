@@ -2,13 +2,24 @@ import Header from "../../components/Header";
 import Title from "../../components/Title";
 import avatar from "../../assets/avatar.png";
 import { AuthContext } from "../../contexts/auth";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
+
 import { db, storage } from "../../services/firebaseConnections";
-import { doc, updateDoc } from "firebase/firestore";
+import {
+  addDoc,
+  doc,
+  updateDoc,
+  collection,
+  onSnapshot,
+  query,
+  orderBy,
+  where,
+} from "firebase/firestore";
 
 import "./profile.css";
 
 import { FiSettings, FiUpload } from "react-icons/fi";
+import { GiConsoleController } from "react-icons/gi";
 
 export default function Profile() {
   const { user, storageUser, setUser, logout } = useContext(AuthContext);
@@ -16,6 +27,50 @@ export default function Profile() {
   const [imageAvatar, setImageAvatar] = useState(null);
   const [nome, setNome] = useState(user && user.nome);
   const [email, setEmail] = useState(user && user.email);
+  const [bio, setBio] = useState("");
+  const [userDetail, setUserDetail] = useState({});
+
+  const [idade, setIdade] = useState("");
+  const [rua, setRua] = useState("");
+  const [bairro, setBairro] = useState("");
+  const [estado, setEstado] = useState("");
+  const [tarefas, setTarefas] = useState([]);
+
+  useEffect(() => {
+    async function loadTarefas() {
+      const userDetail = localStorage.getItem("@ticketspro");
+      setUserDetail(JSON.parse(userDetail));
+
+      if (userDetail) {
+        const data = JSON.parse(userDetail);
+        const tarefaRef = collection(db, "tarefas");
+
+        const q = query(
+          tarefaRef,
+          orderBy("created", "desc"),
+          where("userUid", "==", data?.uid)
+        );
+        const unsub = onSnapshot(q, (snapshot) => {
+          let lista = [];
+
+          snapshot.forEach((doc) => {
+            lista.push({
+              id: doc.id,
+              bairro: doc.data().bairro,
+              estado: doc.data().estado,
+              idade: doc.data().idade,
+              rua: doc.data().rua,
+              biografia: doc.data().tarefa,
+              userUid: doc.data().userUid,
+            });
+          });
+          setTarefas(lista);
+          console.log(lista);
+        });
+      }
+    }
+    loadTarefas();
+  }, []);
 
   function handleFile(e) {
     console.log(e.target.files[0]);
@@ -33,8 +88,28 @@ export default function Profile() {
     }
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
+    await addDoc(collection(db, "tarefas"), {
+      tarefa: bio,
+      userUid: userDetail?.uid,
+      idade: idade,
+      rua: rua,
+      bairro: bairro,
+      estado: estado,
+      created: new Date(),
+    })
+      .then(() => {
+        setBio("");
+      })
+      .catch((error) => {
+        GiConsoleController.log(error);
+      });
+
+    setBairro("");
+    setEstado("");
+    setRua("");
+    setIdade("");
   }
 
   return (
@@ -45,6 +120,24 @@ export default function Profile() {
         <Title name={"minha conta"}>
           <FiSettings size={25} />
         </Title>
+
+        {tarefas.map((item) => (
+          <article key={item.id} className="list">
+            <span>Sua idade</span>
+            <br />
+            <buton>edit</buton>
+            <p>{item.idade}</p>
+            <span>Sua rua </span>
+            <p>{item.rua}</p>
+            <span>Seu Bairro</span>
+            <p>{item.bairro}</p>
+            <span>Seu Estado</span>
+            <p>{item.estado}</p>
+            <span>Sua Bio</span>
+            <p>{item.biografia}</p>
+          </article>
+        ))}
+
         <div className="container">
           <form className="form-profile" onSubmit={handleSubmit}>
             <label className="label-avatar">
@@ -54,13 +147,13 @@ export default function Profile() {
               <input type="file" accept="image/*" onChange={handleFile} />
               <br />
               {avatarUrl === null ? (
-                <img src={avatar} alt="fotoPerfil" width={250} height={250} />
+                <img src={avatar} alt="fotoPerfil" width={200} height={200} />
               ) : (
                 <img
                   src={avatarUrl}
                   alt="fotoPerfil"
-                  width={250}
-                  height={250}
+                  width={200}
+                  height={200}
                 />
               )}
             </label>
@@ -73,19 +166,40 @@ export default function Profile() {
             />
 
             <label>idade</label>
-            <input type="number" placeholder="Sua Idade" />
+            <input
+              type="number"
+              value={idade}
+              onChange={(e) => setIdade(e.target.value)}
+            />
 
             <label>Rua</label>
-            <input type="text" placeholder="Sua Rua" />
+            <input
+              type="text"
+              value={rua}
+              onChange={(e) => setRua(e.target.value)}
+            />
 
             <label>Bairro</label>
-            <input type="text" placeholder="Seu Bairro" />
+            <input
+              type="text"
+              value={bairro}
+              onChange={(e) => setBairro(e.target.value)}
+            />
 
             <label>Estado</label>
-            <input type="text" placeholder="Seu Estado" />
+            <input
+              type="text"
+              placeholder="Seu Estado"
+              value={estado}
+              onChange={(e) => setEstado(e.target.value)}
+            />
 
             <label>Bio</label>
-            <textarea placeholder="Biografia" />
+            <textarea
+              placeholder="Biografia"
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
+            />
 
             <button type="submit">Salvar</button>
           </form>
