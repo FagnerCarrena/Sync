@@ -1,3 +1,5 @@
+/*
+
 .sidebar {
   width: 200px;
   margin: 0;
@@ -31,4 +33,75 @@
 .content {
   margin-left: 200px;
   padding: 1px 16px;
+}
+/*
+
+
+
+
+
+
+/* header.css */
+
+/* Estilos para a barra lateral */
+.sidebar {
+  width: 200px;
+  margin: 0;
+  padding: 0;
+  background-color: #181c2e;
+  position: fixed;
+  height: 100%;
+  overflow: auto;
+}
+
+.sidebar div {
+  background: url("../../assets/cover.png");
+  background-color: #181c2e;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 150px;
+}
+
+.sidebar div {
+  padding-top: 30px;
+}
+
+.sidebar div img {
+  width: 90px;
+  height: 90px;
+  display: block;
+  margin: auto;
+  border-radius: 50%;
+  object-fit: cover;
+  filter: drop-shadow(2px 3px 6px #121212);
+  -webkit-filter: drop-shadow(2px 3px 6px #121212);
+}
+
+/* Estilos para o conteúdo principal */
+.content {
+  padding: 1px 16px;
+}
+
+/* Estilos para dispositivos móveis */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+
+  .sidebar div {
+    height: 100px; /* Reduzir a altura para dispositivos móveis */
+  }
+
+  .sidebar div img {
+    width: 70px; /* Reduzir o tamanho da imagem para dispositivos móveis */
+    height: 70px;
+  }
+
+  .content {
+    margin-left: 0; /* Remove a margem à esquerda para dispositivos móveis */
+    padding: 10px; /* Ajuste o preenchimento */
+  }
 }
