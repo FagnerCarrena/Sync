@@ -10,7 +10,6 @@ export default function Dashboard() {
     <div>
       <Header />
       <Profile />
-      dasboad
     </div>
   );
 }

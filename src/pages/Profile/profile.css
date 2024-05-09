@@ -1,74 +1,79 @@
 .container {
-  display: flex;
-  background-color: #f8f8f8;
-  border-radius: 5px;
-  padding: 0.8em;
-  align-items: center;
-  margin-bottom: 1em;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+.form-profile {
 }
 
-.label-avatar {
-  width: 280px;
-  height: 280px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  cursor: pointer;
+.user-info {
+  text-align: center;
 }
 
-.label-avatar input {
-  display: none;
-}
-
-.label-avatar span {
-  z-index: 99;
-  position: absolute;
-  opacity: 0.7;
-  transition: all 0.5s;
-}
-
-.label-avatar span:hover {
-  opacity: 1;
-  transform: scale(1.4);
-}
-
-.form-profile img {
-  margin-bottom: 1em;
+.user-info img {
+  width: 150px;
+  height: 150px;
   border-radius: 50%;
-  object-fit: cover;
+  margin-bottom: 20px;
 }
 
-.form-profile label {
-  margin-bottom: 0.5em;
-  font-size: 1.4em;
+.user-info h2 {
+  margin-bottom: 10px;
 }
 
-.form-profile input,
-textarea,
-select {
-  margin-bottom: 1em;
-  padding: 0.7em;
-  border: 0;
+.user-info p {
+  margin: 5px 0;
+}
+
+.update-form {
+  margin-top: 30px;
+}
+
+.update-form label {
+  display: block;
+  margin-bottom: 10px;
+}
+.teste {
+  display: flex;
+  align-items: center;
+  background-color: #c82333;
+}
+
+.update-form input,
+.update-form textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
   border-radius: 5px;
-  max-width: 600px;
-}
-
-.form-profile input:disabled {
-  cursor: not-allowed;
-}
-
-.form-profile button {
-  max-width: 600px;
 }
 
 .logout-btn {
-  padding: 8px 20px;
-  border: 1px solid #121212;
-  background-color: transparent;
+  padding: 12px 20px;
+  font-size: 16px;
+  width: 100px;
+  background-color: #c82333;
+  color: white;
+  border: none;
   border-radius: 5px;
-  font-size: 1.5em;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  cursor: pointer;
+}
+
+.logout-btn:hover {
+  background-color: #a61d2e;
+}
+.update-button {
+  margin-bottom: 10px;
+}
+
+@media (max-width: 768px) {
+  .user-info img {
+    width: 120px;
+    height: 120px;
+  }
+
+  .update-form input,
+  .update-form textarea {
+    font-size: 14px;
+  }
 }

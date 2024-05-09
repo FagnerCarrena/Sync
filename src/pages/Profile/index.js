@@ -5,75 +5,110 @@ import { AuthContext } from "../../contexts/auth";
 import { useContext, useState, useEffect } from "react";
 
 import { db, storage } from "../../services/firebaseConnections";
-import {
-  addDoc,
-  doc,
-  updateDoc,
-  collection,
-  onSnapshot,
-  query,
-  orderBy,
-  where,
-} from "firebase/firestore";
+import { addDoc, doc, updateDoc } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 import "./profile.css";
 
-import { FiSettings, FiUpload } from "react-icons/fi";
-import { GiConsoleController } from "react-icons/gi";
+import { toast } from "react-toastify";
 
-export default function Profile() {
+const UserProfile = () => {
   const { user, storageUser, setUser, logout } = useContext(AuthContext);
   const [avatarUrl, setAvatarUrl] = useState(user && user.avatarUrl);
   const [imageAvatar, setImageAvatar] = useState(null);
   const [nome, setNome] = useState(user && user.nome);
-  const [email, setEmail] = useState(user && user.email);
-  const [bio, setBio] = useState("");
-  const [userDetail, setUserDetail] = useState({});
 
-  const [idade, setIdade] = useState("");
-  const [rua, setRua] = useState("");
-  const [bairro, setBairro] = useState("");
-  const [estado, setEstado] = useState("");
-  const [tarefas, setTarefas] = useState([]);
+  const [userInfo, setUserInfo] = useState({
+    name: "",
+    rua: "",
+    age: "",
+    bairro: "",
+    estado: "",
 
-  useEffect(() => {
-    async function loadTarefas() {
-      const userDetail = localStorage.getItem("@ticketspro");
-      setUserDetail(JSON.parse(userDetail));
+    bio: "",
+  });
 
-      if (userDetail) {
-        const data = JSON.parse(userDetail);
-        const tarefaRef = collection(db, "tarefas");
+  const [formValues, setFormValues] = useState({
+    newName: "",
+    newRua: "",
+    newAge: "",
+    newBairro: "",
+    newEstado: "",
+    newBio: "",
+  });
 
-        const q = query(
-          tarefaRef,
-          orderBy("created", "desc"),
-          where("userUid", "==", data?.uid)
-        );
-        const unsub = onSnapshot(q, (snapshot) => {
-          let lista = [];
+  async function handleUpload() {
+    const currentUid = user.uid;
 
-          snapshot.forEach((doc) => {
-            lista.push({
-              id: doc.id,
-              bairro: doc.data().bairro,
-              estado: doc.data().estado,
-              idade: doc.data().idade,
-              rua: doc.data().rua,
-              biografia: doc.data().tarefa,
-              userUid: doc.data().userUid,
-            });
-          });
-          setTarefas(lista);
-          console.log(lista);
+    const uploadRef = ref(storage, `images/${currentUid}/${imageAvatar.name}`);
+
+    const uploadTask = uploadBytes(uploadRef, imageAvatar).then((snapshot) => {
+      getDownloadURL(snapshot.ref).then(async (DownloadURL) => {
+        let urlFoto = DownloadURL;
+
+        const docRef = doc(db, "users", user.uid);
+        await updateDoc(docRef, {
+          avatarUrl: urlFoto,
+          nome: nome,
+        }).then(() => {
+          let data = {
+            ...user,
+            nome: nome,
+            avatarUrl: urlFoto,
+          };
+          setUser(data);
+          storageUser(data);
+          toast.success("Atualizado com sucesso!");
         });
-      }
+      });
+    });
+  }
+
+  async function handleFormSubmit(e) {
+    e.preventDefault();
+
+    if (imageAvatar === null && nome !== "") {
+      const docRef = doc(db, "users", user.uid);
+      await updateDoc(docRef, {}).then(() => {
+        let data = {
+          ...user,
+        };
+        setUser(data);
+        storageUser(data);
+        toast.success("atualizado com sucesso");
+      });
+    } else if (nome !== "" && imageAvatar !== null) {
+      handleUpload();
     }
-    loadTarefas();
-  }, []);
+
+    setUserInfo({
+      name: formValues.newName || userInfo.name,
+      age: formValues.newAge || userInfo.age,
+      rua: formValues.newRua || userInfo.rua,
+      bairro: formValues.newBairro || userInfo.bairro,
+      estado: formValues.newEstado || userInfo.estado,
+      bio: formValues.newBio || userInfo.bio,
+    });
+
+    setFormValues({
+      newRua: "",
+      newName: "",
+      newBairro: "",
+      newAge: "",
+      newEstado: "",
+      newBio: "",
+    });
+  }
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormValues({
+      ...formValues,
+      [name]: value,
+    });
+  };
 
   function handleFile(e) {
-    console.log(e.target.files[0]);
     if (e.target.files[0]) {
       const image = e.target.files[0];
 
@@ -88,132 +123,101 @@ export default function Profile() {
     }
   }
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-    await addDoc(collection(db, "tarefas"), {
-      tarefa: bio,
-      userUid: userDetail?.uid,
-      idade: idade,
-      rua: rua,
-      bairro: bairro,
-      estado: estado,
-      created: new Date(),
-    })
-      .then(() => {
-        setBio("");
-      })
-      .catch((error) => {
-        GiConsoleController.log(error);
-      });
-
-    setBairro("");
-    setEstado("");
-    setRua("");
-    setIdade("");
-  }
-
   return (
-    <div>
-      <Header />
+    <div className="container">
+      <div className="form-profile">
+        <input type="file" accept="image/*" onChange={handleFile} />
+        <br />
+        {avatarUrl === null ? (
+          <img src={avatar} alt="fotoPerfil" width={200} height={200} />
+        ) : (
+          <img src={avatarUrl} alt="fotoPerfil" width={200} height={200} />
+        )}
+        <h2>Informações do Usuário</h2>
+        <p value={nome} onChange={(e) => setNome(e.target.value)}>
+          <strong>Nome:</strong> {nome}
+        </p>
 
-      <div className="content">
-        <Title name={"minha conta"}>
-          <FiSettings size={25} />
-        </Title>
+        <p>
+          <strong>Idade:</strong> {userInfo.age}
+        </p>
 
-        {tarefas.map((item) => (
-          <article key={item.id} className="list">
-            <span>Sua idade</span>
-            <br />
-            <buton>edit</buton>
-            <p>{item.idade}</p>
-            <span>Sua rua </span>
-            <p>{item.rua}</p>
-            <span>Seu Bairro</span>
-            <p>{item.bairro}</p>
-            <span>Seu Estado</span>
-            <p>{item.estado}</p>
-            <span>Sua Bio</span>
-            <p>{item.biografia}</p>
-          </article>
-        ))}
+        <p>
+          <strong>Rua:</strong> {userInfo.rua}
+        </p>
 
-        <div className="container">
-          <form className="form-profile" onSubmit={handleSubmit}>
-            <label className="label-avatar">
-              <span>
-                <FiUpload color="#FFF" size={25} />
-              </span>
-              <input type="file" accept="image/*" onChange={handleFile} />
-              <br />
-              {avatarUrl === null ? (
-                <img src={avatar} alt="fotoPerfil" width={200} height={200} />
-              ) : (
-                <img
-                  src={avatarUrl}
-                  alt="fotoPerfil"
-                  width={200}
-                  height={200}
-                />
-              )}
-            </label>
+        <p>
+          <strong>Bairro:</strong> {userInfo.bairro}
+        </p>
 
-            <label>Nome</label>
-            <input
-              type="text"
-              value={nome}
-              onChange={(e) => setNome(e.target.value)}
-            />
-
-            <label>idade</label>
+        <p>
+          <strong>Estado:</strong> {userInfo.estado}
+        </p>
+        <p>
+          <strong>Biografia:</strong> {userInfo.bio}
+        </p>
+      </div>
+      <div className="update-form">
+        <h2>Atualizar Informações</h2>
+        <form onSubmit={handleFormSubmit}>
+          <label>
+            Nova Idade:
             <input
               type="number"
-              value={idade}
-              onChange={(e) => setIdade(e.target.value)}
+              name="newAge"
+              value={formValues.newAge}
+              onChange={handleInputChange}
             />
-
-            <label>Rua</label>
+          </label>
+          <label>
+            Rua:
             <input
               type="text"
-              value={rua}
-              onChange={(e) => setRua(e.target.value)}
+              name="newRua"
+              value={formValues.newRua}
+              onChange={handleInputChange}
             />
+          </label>
 
-            <label>Bairro</label>
+          <label>
+            Bairro:
             <input
               type="text"
-              value={bairro}
-              onChange={(e) => setBairro(e.target.value)}
+              name="newBairro"
+              value={formValues.newBairro}
+              onChange={handleInputChange}
             />
+          </label>
 
-            <label>Estado</label>
+          <label>
+            Estado:
             <input
               type="text"
-              placeholder="Seu Estado"
-              value={estado}
-              onChange={(e) => setEstado(e.target.value)}
+              name="newEstado"
+              value={formValues.newEstado}
+              onChange={handleInputChange}
             />
-
-            <label>Bio</label>
+          </label>
+          <label>
+            Nova Biografia:
             <textarea
-              placeholder="Biografia"
-              value={bio}
-              onChange={(e) => setBio(e.target.value)}
+              name="newBio"
+              value={formValues.newBio}
+              onChange={handleInputChange}
             />
-
-            <button type="submit">Salvar</button>
-          </form>
-        </div>
-
-        <div className="container">
-          <button className="logout-btn" onClick={() => logout()}>
-            {" "}
-            Sair
+          </label>
+          <button className="logout-btn update-button" type="submit">
+            Atualizar
           </button>
-        </div>
+        </form>
       </div>
 
-      <h1>Pagina perfil</h1>
+      <button className="logout-btn" onClick={() => logout()}>
+        {" "}
+        Sair
+      </button>
     </div>
   );
-}
+};
+
+export default UserProfile;
