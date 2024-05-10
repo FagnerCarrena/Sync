@@ -19,7 +19,7 @@ const UserProfile = () => {
   const [nome, setNome] = useState(user && user.nome);
 
   const [userInfo, setUserInfo] = useState({
-    name: "",
+    nome: "",
     rua: "",
     age: "",
     bairro: "",
@@ -29,7 +29,7 @@ const UserProfile = () => {
   });
 
   const [formValues, setFormValues] = useState({
-    newName: "",
+    newNome: "",
     newRua: "",
     newAge: "",
     newBairro: "",
@@ -69,9 +69,12 @@ const UserProfile = () => {
 
     if (imageAvatar === null && nome !== "") {
       const docRef = doc(db, "users", user.uid);
-      await updateDoc(docRef, {}).then(() => {
+      await updateDoc(docRef, {
+        nome: nome,
+      }).then(() => {
         let data = {
           ...user,
+          nome: nome,
         };
         setUser(data);
         storageUser(data);
@@ -82,7 +85,7 @@ const UserProfile = () => {
     }
 
     setUserInfo({
-      name: formValues.newName || userInfo.name,
+      name: formValues.newNome || userInfo.nome,
       age: formValues.newAge || userInfo.age,
       rua: formValues.newRua || userInfo.rua,
       bairro: formValues.newBairro || userInfo.bairro,
@@ -91,6 +94,7 @@ const UserProfile = () => {
     });
 
     setFormValues({
+      newNome: "",
       newRua: "",
       newName: "",
       newBairro: "",
