@@ -9,6 +9,19 @@ O projeto consiste em um espaço onde o usuário possa assistir e favoritar seus
 ### ✨ [Demo](https://sync-weld.vercel.app)
 
 
+
+
+
+
+
+https://github.com/FagnerCarrena/Sync/assets/104034694/7a4d5ab8-5416-4a9e-b0c4-41777ea598dd
+
+
+
+
+
+
+
 ### ✔Tecnologias Utilizadas
 
 O projeto foi desenvolvido utilizando as seguintes tecnologias:
