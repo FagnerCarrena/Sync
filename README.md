@@ -6,6 +6,9 @@
 
 O projeto consiste em um espaço onde o usuário possa assistir e favoritar seus filmes e séries prediletos.
 
+
+
+
 ### ✨ [Demo](https://sync-weld.vercel.app)
 
 
@@ -14,6 +17,9 @@ O projeto consiste em um espaço onde o usuário possa assistir e favoritar seus
 
 
 
+
+
+### ✔ Assista ao video explicativo aqui:
 https://github.com/FagnerCarrena/Sync/assets/104034694/7a4d5ab8-5416-4a9e-b0c4-41777ea598dd
 
 
