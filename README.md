@@ -6,7 +6,8 @@
 
 O projeto consiste em um espaço onde o usuário possa assistir e favoritar seus filmes e séries prediletos.
 
-### ✨ [Demo](https://cinema-henna-sigma.vercel.app/)
+### ✨ [Demo](https://sync-weld.vercel.app)
+
 
 ### ✔Tecnologias Utilizadas
 
@@ -16,6 +17,9 @@ O projeto foi desenvolvido utilizando as seguintes tecnologias:
 - [Sass](https://www.alura.com.br/)
 - [React Router DOM](https://reactrouter.com/)
 - [React Hooks](https://reactjs.org/docs/hooks-intro.html)
+- [Firebase](https://firebase.google.com/)
+- [FirebaseDatabase](https://firebase.google.com/)
+- [FirebaseStorage](https://firebase.google.com/)
 
 ---
 
@@ -33,6 +37,6 @@ npm start
 
 🦾Skills
 
-React.js, javaScript, deploy
+React.js, javaScript, deploy, Firebase, authetication, storage, Database
 
 ---
