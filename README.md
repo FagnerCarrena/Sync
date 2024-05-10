@@ -61,7 +61,7 @@ React.js, javaScript, deploy, Firebase, authetication, storage, Database
 ---
 
 ```
-usuario de teste:
+## usuário de teste:
 email: ana@teste.com
 senha: 123123
 
