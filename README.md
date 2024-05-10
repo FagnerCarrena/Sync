@@ -4,7 +4,7 @@
 
 ## 👌Sobre
 
-O projeto consiste em um espaço onde o usuário possa se cadastrar e logar usando a authenticação, dentro do painel do usuario ele podera alterar suas informações básicas, como idade, rua, endereco estado, além da sua foto de perfil e etc....é importante ressaltar o uso de um email em formato valido. existe um controle de páginas privadas.
+O projeto consiste em um espaço onde o usuário possa se cadastrar e logar usando a authenticação, dentro do painel do usuario ele podera alterar suas informações básicas, como idade, rua, endereco estado, além da sua foto de perfil e etc....é importante ressaltar o uso de um email em formato valido. existe um controle de páginas privadas, o projeto foi pensado tambem no que tange a responsividade, portanto pode acessa-lo com diferentes dispositivos.
 
 
 
@@ -39,6 +39,8 @@ O projeto foi desenvolvido utilizando as seguintes tecnologias:
 - [Firebase](https://firebase.google.com/)
 - [FirebaseDatabase](https://firebase.google.com/)
 - [FirebaseStorage](https://firebase.google.com/)
+- [React-Toastify](https://www.npmjs.com/package/react-toastify))
+
 
 ---
 
